@@ -1,0 +1,17 @@
+p{
+     margin-left: 40%;
+    margin-top: 30px;
+}
+.container-fluid-content{
+    padding-left: 143px;
+    padding-right: 200px;
+    padding-top: 0px;
+    /*padding-right: 100px;*/
+
+}
+.row-content{
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    padding: 20px;
+    height: 650px;
+}

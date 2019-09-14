@@ -94,7 +94,8 @@ class Picture(models.Model):
     Y10 = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
     Y11 = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
     Y12 = models.DecimalField(max_digits=6, decimal_places=3, default=0.0)
-    number = models.IntegerField(default=0)
+    I_number = models.IntegerField(default=0)
+    S_number = models.IntegerField(default=0)
 
 class Satisfaction(models.Model):
     """喜好程度表"""

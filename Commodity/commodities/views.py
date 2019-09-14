@@ -32,28 +32,39 @@ def pageA1(request):
 def pageA11(request):
     picture = models.Picture.objects.all()
     choose_img = models.Picture.objects.all().first()
-    return render(request, 'pageA11.html', {'picture': picture, 'choose_img': choose_img})
+
+    # 获取图片满意度信息
+    choose_img_satisfaction = models.Satisfaction.objects.filter(picture_id=int(choose_img.p_id))
+    degree_total = 0
+    for row in choose_img_satisfaction:
+        degree_total += row.degree
+    # 判断提交次数是否为0
+    if choose_img.S_number == 0:
+        degree_avg = 0
+    else:
+        degree_avg = degree_total / choose_img.S_number
+    return render(request, 'pageA11.html', {'picture': picture, 'choose_img': choose_img, "degree_avg": degree_avg})
 
 def pageA2(request):
     if request.method == 'POST':
         img_id = request.POST.get('img_id')
         img_ = models.Picture.objects.filter(p_id=img_id).first()
-        img_.number += 1
-        Y1 = (Decimal(request.POST.get('Y1')) + img_.Y1) / img_.number
-        Y2 = (Decimal(request.POST.get('Y2')) + img_.Y2) / img_.number
-        Y3 = (Decimal(request.POST.get('Y3')) + img_.Y3) / img_.number
-        Y4 = (Decimal(request.POST.get('Y4')) + img_.Y4) / img_.number
-        Y5 = (Decimal(request.POST.get('Y5')) + img_.Y5) / img_.number
-        Y6 = (Decimal(request.POST.get('Y6')) + img_.Y6) / img_.number
-        Y7 = (Decimal(request.POST.get('Y7')) + img_.Y7) / img_.number
-        Y8 = (Decimal(request.POST.get('Y8')) + img_.Y8) / img_.number
-        Y9 = (Decimal(request.POST.get('Y9')) + img_.Y9) / img_.number
-        Y10 = (Decimal(request.POST.get('Y10')) + img_.Y10) / img_.number
-        Y11 = (Decimal(request.POST.get('Y11')) + img_.Y11) / img_.number
-        Y12 = (Decimal(request.POST.get('Y12')) + img_.Y12) / img_.number
+        img_.I_number += 1
+        Y1 = (Decimal(request.POST.get('Y1')) + img_.Y1) / img_.I_number
+        Y2 = (Decimal(request.POST.get('Y2')) + img_.Y2) / img_.I_number
+        Y3 = (Decimal(request.POST.get('Y3')) + img_.Y3) / img_.I_number
+        Y4 = (Decimal(request.POST.get('Y4')) + img_.Y4) / img_.I_number
+        Y5 = (Decimal(request.POST.get('Y5')) + img_.Y5) / img_.I_number
+        Y6 = (Decimal(request.POST.get('Y6')) + img_.Y6) / img_.I_number
+        Y7 = (Decimal(request.POST.get('Y7')) + img_.Y7) / img_.I_number
+        Y8 = (Decimal(request.POST.get('Y8')) + img_.Y8) / img_.I_number
+        Y9 = (Decimal(request.POST.get('Y9')) + img_.Y9) / img_.I_number
+        Y10 = (Decimal(request.POST.get('Y10')) + img_.Y10) / img_.I_number
+        Y11 = (Decimal(request.POST.get('Y11')) + img_.Y11) / img_.I_number
+        Y12 = (Decimal(request.POST.get('Y12')) + img_.Y12) / img_.I_number
         models.Picture.objects.filter(p_id=img_id).update(Y1=Y1, Y2=Y2, Y3=Y3, Y4=Y4, Y5=Y5, Y6=Y6,
                                                           Y7=Y7, Y8=Y8, Y9=Y9, Y10=Y10, Y11=Y11, Y12=Y12,
-                                                          number=img_.number)
+                                                          I_number=img_.I_number)
 
     img = models.Picture.objects.all()
     choose_img = models.Picture.objects.all().first()
@@ -79,6 +90,7 @@ def pageA3(request):
             # 外键属性值，必须要传实例
             satisfaction = models.Satisfaction(answer=question, picture=row,
                                                degree=int(request.POST.get(str(row.p_id))))
+            models.Picture.objects.filter(p_id=row.p_id).update(S_number=row.S_number + 1)
             satisfaction.save()
 
     img = models.Picture.objects.all()
@@ -98,7 +110,19 @@ def find(request, page_id, img_id):
     choose_img = models.Picture.objects.filter(p_id=int(img_id)).first()
     picture = models.Picture.objects.all()
     if int(page_id) == 1:
-        return render(request, "pageA11.html", {"choose_img": choose_img, "picture": picture})
+
+        # 获取图片满意度信息
+        choose_img_satisfaction = models.Satisfaction.objects.filter(picture_id=int(img_id))
+        degree_total = 0
+        for row in choose_img_satisfaction:
+            degree_total += row.degree
+
+        # 判断提交次数是否为0
+        if choose_img.S_number == 0:
+            degree_avg = 0
+        else:
+            degree_avg = degree_total/choose_img.S_number
+        return render(request, "pageA11.html", {"choose_img": choose_img, "picture": picture, "degree_avg": degree_avg})
     elif int(page_id) == 2:
         return render(request, "pageA2.html", {"choose_img": choose_img, "picture": picture})
 
